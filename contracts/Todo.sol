@@ -13,13 +13,19 @@ contract Todo {
     bool done;
   }
 
-  Task[] tasks;
+  uint nextTaskId;
+  mapping(uint => Task) tasks;
 
-  event TaskCreated(address creator, string content);
+  constructor() {
+    nextTaskId = 0;
+  }
+
+  event TaskCreated(uint, address, string);
   
   function createTask(string memory _content) public {
-    tasks.push(Task(tasks.length, block.timestamp, _content, msg.sender, false));
-    emit TaskCreated(msg.sender, _content);
+    tasks[nextTaskId] = Task(nextTaskId, block.timestamp, _content, msg.sender, false);
+    emit TaskCreated(nextTaskId, msg.sender, _content);
+    nextTaskId++;
   }
 
   function getTask(uint _id) public view returns (
